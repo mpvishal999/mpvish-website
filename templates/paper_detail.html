@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ paper.get_meta_title() }}{% endblock %}
+{% block meta_description %}{{ paper.get_meta_description() }}{% endblock %}
+{% block content %}
+<div class="detail-page">
+    <div class="detail-card animate-fade-up">
+        <div class="detail-header">
+            {% if paper.is_featured %}<span class="card-badge card-badge-featured">FEATURED</span>{% endif %}
+            {% if paper.is_premium %}<span class="card-badge card-badge-premium">PREMIUM</span>{% endif %}
+            <span class="detail-class">{{ paper.exam_type }}{% if paper.year %} &middot; {{ paper.year }}{% endif %}</span>
+        </div>
+        <h1 class="detail-title">{{ paper.title }}</h1>
+        <p class="detail-meta">{{ paper.subject }}</p>
+
+        {% if paper.description %}
+        <div class="detail-description">{{ paper.description }}</div>
+        {% endif %}
+
+        <div class="detail-stats">
+            <span>&#128190; {{ paper.downloads or 0 }} Downloads</span>
+            <span>&#128065; {{ paper.views or 0 }} Views</span>
+            <span>&#128197; {{ paper.file_size|human_size if paper.file_size else 'Unknown' }}</span>
+        </div>
+
+        <div class="detail-actions">
+            <a href="{{ url_for('main.download_paper', paper_id=paper.id) }}" class="btn btn-primary btn-animate btn-large">
+                &#128190; Download PDF
+            </a>
+        </div>
+    </div>
+
+    {% if related %}
+    <div class="related-section">
+        <h2 class="section-title">Related <span class="text-highlight">Papers</span></h2>
+        <div class="card-grid">
+            {% for r in related %}
+            <a href="{{ url_for('main.paper_detail', slug=r.slug) }}" class="card animate-fade-up">
+                <div class="card-class">{{ r.exam_type }} &middot; {{ r.year }}</div>
+                <h3 class="card-title">{{ r.title }}</h3>
+                <p class="card-meta">{{ r.subject }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

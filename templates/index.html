@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}{{ meta_title or site_name }}{% endblock %}
+{% block meta_description %}{{ meta_description or site_tagline }}{% endblock %}
+
+{% block content %}
+{% if hero_images %}
+<!-- HERO CAROUSEL -->
+<section class="carousel" id="heroCarousel">
+    <div class="carousel-track" id="carouselTrack">
+        {% for img in hero_images %}
+        <div class="carousel-slide {% if loop.first %}active{% endif %}">
+            <img src="{{ url_for('main.serve_upload', filename='hero/' + img.image_path) }}" alt="{{ img.title }}" loading="lazy">
+            <div class="carousel-overlay">
+                <div class="carousel-text">
+                    {% if img.title %}<h2 class="carousel-title">{{ img.title }}</h2>{% endif %}
+                    {% if img.subtitle %}<p class="carousel-subtitle">{{ img.subtitle }}</p>{% endif %}
+                    {% if img.link %}<a href="{{ img.link }}" target="_blank" class="btn btn-primary btn-small">{{ img.link_text or 'View' }}</a>{% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% if hero_images|length > 1 %}
+    <button class="carousel-arrow carousel-prev" onclick="moveSlide(-1)" aria-label="Previous">&#10094;</button>
+    <button class="carousel-arrow carousel-next" onclick="moveSlide(1)" aria-label="Next">&#10095;</button>
+    <div class="carousel-dots" id="carouselDots">
+        {% for img in hero_images %}
+        <button class="carousel-dot {% if loop.first %}active{% endif %}" onclick="goToSlide({{ loop.index0 }})" aria-label="Slide {{ loop.index }}"></button>
+        {% endfor %}
+    </div>
+    {% endif %}
+</section>
+{% endif %}
+
+<!-- HERO TEXT -->
+<section class="hero">
+    <div class="hero-inner">
+        <h1 class="hero-title">{{ site_name }}</h1>
+        <p class="hero-subtitle">{{ site_tagline }}</p>
+        <div class="hero-actions">
+            <a href="{{ url_for('main.notes') }}" class="btn btn-primary btn-large">Notes Download</a>
+            <a href="{{ url_for('main.papers') }}" class="btn btn-outline btn-large">Old Papers</a>
+            <a href="{{ url_for('main.mp_yojna') }}" class="btn btn-outline btn-large">MP Yojna</a>
+        </div>
+    </div>
+</section>
+
+<!-- QUICK ACCESS -->
+<section class="qa-section">
+    <div class="qa-grid">
+        <a href="{{ url_for('main.notes') }}" class="qa-card">
+            <div class="qa-icon">&#128218;</div><h3>Notes</h3><p>Class 10th & 12th PDF</p>
+        </a>
+        <a href="{{ url_for('main.papers') }}" class="qa-card">
+            <div class="qa-icon">&#128444;</div><h3>Old Papers</h3><p>Previous year papers</p>
+        </a>
+        <a href="{{ url_for('main.results') }}" class="qa-card">
+            <div class="qa-icon">&#9989;</div><h3>Results</h3><p>Board exam results</p>
+        </a>
+        <a href="{{ url_for('main.govt') }}" class="qa-card">
+            <div class="qa-icon">&#128188;</div><h3>Jobs</h3><p>Sarkari notifications</p>
+        </a>
+        <a href="{{ url_for('main.mp_yojna') }}" class="qa-card">
+            <div class="qa-icon">&#127963;</div><h3>MP Yojna</h3><p>Govt schemes</p>
+        </a>
+        <a href="{{ url_for('main.premium') }}" class="qa-card">
+            <div class="qa-icon">&#11088;</div><h3>Premium</h3><p>Exclusive content</p>
+        </a>
+    </div>
+</section>
+
+{% if featured_yojnas %}
+<section class="section">
+    <div class="section-header">
+        <h2 class="section-title">MP <span class="text-gradient">Yojna & Info</span></h2>
+        <a href="{{ url_for('main.mp_yojna') }}" class="see-all">Sab dekhein &rarr;</a>
+    </div>
+    <div class="card-grid">
+        {% for y in featured_yojnas %}
+        <div class="card card-yojna">
+            <div class="card-top">
+                <span class="chip chip-{{ y.category }}">{{ y.category|upper }}</span>
+                {% if y.is_featured %}<span class="chip chip-featured">&#11088;</span>{% endif %}
+            </div>
+            <h3 class="card-title">{{ y.title }}</h3>
+            <p class="card-desc">{{ y.description|truncate_text(80) }}</p>
+            {% if y.department %}<p class="card-meta">&#128100; {{ y.department }}</p>{% endif %}
+            {% if y.link %}<a href="{{ y.link }}" target="_blank" class="card-link">{{ y.link_text or 'Read More' }} &rarr;</a>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="section">
+    <div class="section-header">
+        <h2 class="section-title">Latest <span class="text-gradient">Notes</span></h2>
+        <a href="{{ url_for('main.notes') }}" class="see-all">Sab dekhein &rarr;</a>
+    </div>
+    <div class="card-grid">
+        {% for note in latest_notes %}
+        <a href="{{ url_for('main.note_detail', slug=note.slug) }}" class="card">
+            <div class="card-top">
+                <span class="chip chip-class">{{ note.class_level }}</span>
+                {% if note.is_premium %}<span class="chip chip-premium">PREMIUM</span>{% endif %}
+            </div>
+            <h3 class="card-title">{{ note.title }}</h3>
+            <p class="card-meta">{{ note.subject }}{% if note.chapter %} &middot; {{ note.chapter }}{% endif %}</p>
+            <div class="card-stats"><span>&#11015; {{ note.downloads or 0 }}</span><span>&#128065; {{ note.views or 0 }}</span></div>
+        </a>
+        {% else %}
+        <div class="empty-state"><p>Abhi koi notes nahi hain.</p></div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <h2 class="section-title">Latest <span class="text-gradient">Papers</span></h2>
+        <a href="{{ url_for('main.papers') }}" class="see-all">Sab dekhein &rarr;</a>
+    </div>
+    <div class="card-grid">
+        {% for paper in latest_papers %}
+        <a href="{{ url_for('main.paper_detail', slug=paper.slug) }}" class="card">
+            <div class="card-top">
+                <span class="chip chip-class">{{ paper.exam_type }} &middot; {{ paper.year }}</span>
+                {% if paper.is_premium %}<span class="chip chip-premium">PREMIUM</span>{% endif %}
+            </div>
+            <h3 class="card-title">{{ paper.title }}</h3>
+            <p class="card-meta">{{ paper.subject or 'All Subjects' }}</p>
+            <div class="card-stats"><span>&#11015; {{ paper.downloads or 0 }}</span><span>&#128065; {{ paper.views or 0 }}</span></div>
+        </a>
+        {% else %}
+        <div class="empty-state"><p>Abhi koi papers nahi hain.</p></div>
+        {% endfor %}
+    </div>
+</section>
+
+{% if latest_updates %}
+<section class="section">
+    <div class="section-header">
+        <h2 class="section-title">Latest <span class="text-gradient">Updates</span></h2>
+        <a href="{{ url_for('main.govt') }}" class="see-all">Sab dekhein &rarr;</a>
+    </div>
+    <div class="updates-list">
+        {% for update in latest_updates %}
+        <div class="update-item">
+            <div class="update-head">
+                {% if update.is_pinned %}<span class="pin-badge">&#128204;</span>{% endif %}
+                <span class="chip">{{ update.category }}</span>
+                <span class="update-date">{{ update.created_at|time_ago }}</span>
+            </div>
+            <h4>{{ update.title }}</h4>
+            <p>{{ update.content|truncate_text(130) }}</p>
+            {% if update.link %}<a href="{{ update.link }}" target="_blank" class="update-link">{{ update.link_text or 'Visit' }} &rarr;</a>{% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<section class="cta-section">
+    <div class="cta-card">
+        <h2>Padhai shuru karo, <span class="text-gradient">free me!</span></h2>
+        <p>Account banao aur notes, papers sab kuch download karo.</p>
+        {% if not g.user %}
+        <a href="{{ url_for('auth.login') }}#register" class="btn btn-primary btn-large btn-animate">Free Register karo</a>
+        {% else %}
+        <a href="{{ url_for('main.notes') }}" class="btn btn-primary btn-large btn-animate">Notes Browse karo</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+{% if hero_images and hero_images|length > 1 %}
+<script>
+var slideIndex = 0;
+var slides = document.querySelectorAll('.carousel-slide');
+var dots = document.querySelectorAll('.carousel-dot');
+
+function showSlide(n) {
+    slides.forEach(function(s) { s.classList.remove('active'); });
+    dots.forEach(function(d) { d.classList.remove('active'); });
+    slideIndex = (n + slides.length) % slides.length;
+    if (slides[slideIndex]) slides[slideIndex].classList.add('active');
+    if (dots[slideIndex]) dots[slideIndex].classList.add('active');
+}
+function moveSlide(dir) { showSlide(slideIndex + dir); }
+function goToSlide(n) { showSlide(n); }
+setInterval(function() { moveSlide(1); }, 5000);
+</script>
+{% endif %}
+{% endblock %}

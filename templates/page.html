@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ page.title }} - {{ site_name }}{% endblock %}
+{% block content %}
+<div class="detail-page">
+    <div class="detail-card animate-fade-up">
+        <h1>{{ page.title }}</h1>
+        <div class="page-content">{{ page.content|safe }}</div>
+    </div>
+</div>
+{% endblock %}

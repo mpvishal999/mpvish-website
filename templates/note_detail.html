@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ note.get_meta_title() }}{% endblock %}
+{% block meta_description %}{{ note.get_meta_description() }}{% endblock %}
+{% block content %}
+<div class="detail-page">
+    <div class="detail-card animate-fade-up">
+        <div class="detail-header">
+            {% if note.is_featured %}<span class="card-badge card-badge-featured">FEATURED</span>{% endif %}
+            {% if note.is_premium %}<span class="card-badge card-badge-premium">PREMIUM</span>{% endif %}
+            <span class="detail-class">{{ note.class_level }}{% if note.stream %} &middot; {{ note.stream }}{% endif %}</span>
+        </div>
+        <h1 class="detail-title">{{ note.title }}</h1>
+        <p class="detail-meta">{{ note.subject }}{% if note.chapter %} &middot; {{ note.chapter }}{% endif %}</p>
+
+        {% if note.description %}
+        <div class="detail-description">
+            {{ note.description }}
+        </div>
+        {% endif %}
+
+        <div class="detail-stats">
+            <span>&#128190; {{ note.downloads or 0 }} Downloads</span>
+            <span>&#128065; {{ note.views or 0 }} Views</span>
+            <span>&#128197; {{ note.file_size|human_size if note.file_size else 'Unknown' }}</span>
+        </div>
+
+        <div class="detail-actions">
+            <a href="{{ url_for('main.download_note', note_id=note.id) }}" class="btn btn-primary btn-animate btn-large">
+                &#128190; Download PDF
+            </a>
+        </div>
+    </div>
+
+    {% if related %}
+    <div class="related-section">
+        <h2 class="section-title">Related <span class="text-highlight">Notes</span></h2>
+        <div class="card-grid">
+            {% for r in related %}
+            <a href="{{ url_for('main.note_detail', slug=r.slug) }}" class="card animate-fade-up">
+                <div class="card-class">{{ r.class_level }}</div>
+                <h3 class="card-title">{{ r.title }}</h3>
+                <p class="card-meta">{{ r.subject }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

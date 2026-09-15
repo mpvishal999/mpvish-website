@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Purchase Premium - {{ plan.name }}{% endblock %}
+{% block content %}
+<div class="detail-page">
+    <div class="detail-card animate-fade-up">
+        <h1>Get <span class="text-highlight">{{ plan.name }}</span></h1>
+        <p>Price: &#8377; {{ plan.price_inr|floatformat(0) }} / {{ plan.duration_days }} days</p>
+
+        <div class="payment-info">
+            <h3>Payment Instructions</h3>
+            {% if upi_id %}
+            <p>UPI ID: <strong>{{ upi_id }}</strong></p>
+            {% endif %}
+            {% if payment_instructions %}
+            <p>{{ payment_instructions }}</p>
+            {% endif %}
+        </div>
+
+        <form method="POST" class="form">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.transaction_id.label }}
+                {{ form.transaction_id(class="form-input", placeholder="Transaction ID / UTR Number") }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-large btn-animate">Submit Payment</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

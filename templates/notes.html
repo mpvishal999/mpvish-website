@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>MP Board <span class="text-highlight">Notes</span></h1>
+    <p>Class 10th & 12th chapter-wise notes PDF download</p>
+</div>
+
+<div class="filters">
+    <form method="GET" class="filter-form">
+        <input type="text" name="q" value="{{ search_q }}" placeholder="Search notes..." class="filter-input">
+        <select name="class" class="filter-select">
+            <option value="">All Classes</option>
+            <option value="10th" {% if current_class == '10th' %}selected{% endif %}>Class 10th</option>
+            <option value="12th" {% if current_class == '12th' %}selected{% endif %}>Class 12th</option>
+        </select>
+        <select name="subject" class="filter-select">
+            <option value="">All Subjects</option>
+            {% for s in subjects %}
+            <option value="{{ s }}" {% if current_subject == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+</div>
+
+<div class="card-grid">
+    {% for note in notes %}
+    <a href="{{ url_for('main.note_detail', slug=note.slug) }}" class="card animate-fade-up" style="animation-delay: {{ loop.index0 * 0.05 }}s">
+        {% if note.is_featured %}<div class="card-badge card-badge-featured">FEATURED</div>{% endif %}
+        {% if note.is_premium %}<div class="card-badge card-badge-premium">PREMIUM</div>{% endif %}
+        <div class="card-class">{{ note.class_level }}{% if note.stream %} &middot; {{ note.stream }}{% endif %}</div>
+        <h3 class="card-title">{{ note.title }}</h3>
+        <p class="card-meta">{{ note.subject }}{% if note.chapter %} &middot; {{ note.chapter }}{% endif %}</p>
+        <div class="card-footer">
+            <span>&#128190; {{ note.downloads or 0 }}</span>
+            <span>&#128065; {{ note.views or 0 }}</span>
+        </div>
+    </a>
+    {% else %}
+    <div class="empty-state">
+        <p>&#128269; Koi notes nahi mile.</p>
+        <p>Filter change karein ya search query badlein.</p>
+    </div>
+    {% endfor %}
+</div>
+
+{% include "pagination.html" %}
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Old <span class="text-highlight">Papers</span></h1>
+    <p>Previous year question papers PDF download</p>
+</div>
+
+<div class="filters">
+    <form method="GET" class="filter-form">
+        <input type="text" name="q" value="{{ search_q }}" placeholder="Search papers..." class="filter-input">
+        <select name="year" class="filter-select">
+            <option value="">All Years</option>
+            {% for y in years %}
+            <option value="{{ y }}" {% if current_year == y %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+</div>
+
+<div class="card-grid">
+    {% for paper in papers %}
+    <a href="{{ url_for('main.paper_detail', slug=paper.slug) }}" class="card animate-fade-up" style="animation-delay: {{ loop.index0 * 0.05 }}s">
+        {% if paper.is_featured %}<div class="card-badge card-badge-featured">FEATURED</div>{% endif %}
+        {% if paper.is_premium %}<div class="card-badge card-badge-premium">PREMIUM</div>{% endif %}
+        <div class="card-class">{{ paper.exam_type }}{% if paper.year %} &middot; {{ paper.year }}{% endif %}</div>
+        <h3 class="card-title">{{ paper.title }}</h3>
+        <p class="card-meta">{{ paper.subject }}</p>
+        <div class="card-footer">
+            <span>&#128190; {{ paper.downloads or 0 }}</span>
+            <span>&#128065; {{ paper.views or 0 }}</span>
+        </div>
+    </a>
+    {% else %}
+    <div class="empty-state">
+        <p>&#128269; Koi papers nahi mile.</p>
+    </div>
+    {% endfor %}
+</div>
+
+{% include "pagination.html" %}
+{% endblock %}

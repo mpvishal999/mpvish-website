@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ meta_title }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Sarkari <span class="text-highlight">Jobs</span></h1>
+    <p>Latest MP government job updates & notifications</p>
+</div>
+
+<div class="filters">
+    <form method="GET" class="filter-form">
+        <input type="text" name="q" value="{{ search_q }}" placeholder="Search jobs..." class="filter-input">
+        <select name="category" class="filter-select">
+            <option value="">All Categories</option>
+            <option value="general" {% if current_category == 'general' %}selected{% endif %}>General</option>
+            <option value="admit_card" {% if current_category == 'admit_card' %}selected{% endif %}>Admit Card</option>
+            <option value="result" {% if current_category == 'result' %}selected{% endif %}>Result</option>
+            <option value="syllabus" {% if current_category == 'syllabus' %}selected{% endif %}>Syllabus</option>
+            <option value="notification" {% if current_category == 'notification' %}selected{% endif %}>Notification</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+</div>
+
+<div class="updates-list">
+    {% for update in updates %}
+    <div class="update-item animate-slide-right" style="animation-delay: {{ loop.index0 * 0.05 }}s">
+        {% if update.is_pinned %}<span class="pin-badge">&#128204; Pinned</span>{% endif %}
+        <span class="update-category">{{ update.category }}</span>
+        <h3>{{ update.title }}</h3>
+        <p>{{ update.content|truncate_text(200) }}</p>
+        {% if update.link %}
+        <a href="{{ update.link }}" target="_blank" class="update-link">{{ update.link_text or 'Visit Official Site' }} &rarr;</a>
+        {% endif %}
+        <span class="update-date">{{ update.created_at|time_ago }}</span>
+    </div>
+    {% else %}
+    <div class="empty-state"><p>&#128227; Abhi koi updates nahi hain.</p></div>
+    {% endfor %}
+</div>
+{% endblock %}

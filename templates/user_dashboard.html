@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - {{ site_name }}{% endblock %}
+{% block content %}
+<div class="dashboard-page">
+    <div class="dashboard-header animate-fade-up">
+        <div class="profile-avatar" style="background: {{ g.user.avatar_color or '#FF6B35' }}">{{ g.user.initials() }}</div>
+        <div>
+            <h1>Welcome, {{ g.user.name }}!</h1>
+            <p>{{ g.user.email }}</p>
+        </div>
+    </div>
+
+    <div class="dashboard-stats">
+        <div class="stat-card animate-scale">
+            <span class="stat-value">{{ downloads|length }}</span>
+            <span class="stat-label">Downloads</span>
+        </div>
+        <div class="stat-card animate-scale">
+            <span class="stat-value">{{ purchases|length }}</span>
+            <span class="stat-label">Purchases</span>
+        </div>
+        <div class="stat-card animate-scale">
+            <span class="stat-value">{{ notifs|length }}</span>
+            <span class="stat-label">Notifications</span>
+        </div>
+    </div>
+
+    <div class="dashboard-actions">
+        <a href="{{ url_for('main.notes') }}" class="btn btn-primary btn-animate">Browse Notes</a>
+        <a href="{{ url_for('main.papers') }}" class="btn btn-primary btn-animate">Browse Papers</a>
+        <a href="{{ url_for('main.mp_yojna') }}" class="btn btn-highlight btn-animate">MP Yojna</a>
+        <a href="{{ url_for('main.premium') }}" class="btn btn-premium btn-animate">Get Premium</a>
+    </div>
+
+    {% if downloads %}
+    <div class="section">
+        <h2 class="section-title">Recent <span class="text-highlight">Downloads</span></h2>
+        <div class="list-group">
+            {% for dl in downloads %}
+            <div class="list-item">
+                {% if dl.note_id %}
+                <a href="{{ url_for('main.note_detail', slug=dl.note.slug if dl.note else '#') }}">{{ dl.note.title if dl.note else 'Deleted' }}</a>
+                {% elif dl.paper_id %}
+                <a href="{{ url_for('main.paper_detail', slug=dl.paper.slug if dl.paper else '#') }}">{{ dl.paper.title if dl.paper else 'Deleted' }}</a>
+                {% endif %}
+                <span class="list-date">{{ dl.created_at|time_ago }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if purchases %}
+    <div class="section">
+        <h2 class="section-title">Premium <span class="text-highlight">Purchases</span></h2>
+        <div class="list-group">
+            {% for p in purchases %}
+            <div class="list-item">
+                <span>{{ p.plan.name if p.plan else 'Plan deleted' }}</span>
+                <span class="purchase-status status-{{ p.status }}">{{ p.status|upper }}</span>
+                <span class="list-date">{{ p.created_at|format_date }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Notifications - {{ site_name }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Your <span class="text-highlight">Notifications</span></h1>
+    <form method="POST" action="{{ url_for('auth.mark_notifications_read') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-outline btn-small">Sab read mark karein</button>
+    </form>
+</div>
+
+<div class="notif-list">
+    {% for n in notifs %}
+    <div class="notif-item {% if not n.is_read %}notif-unread{% endif %} animate-slide-right" style="animation-delay: {{ loop.index0 * 0.03 }}s">
+        <h4>{{ n.title }}</h4>
+        <p>{{ n.message }}</p>
+        <span class="notif-date">{{ n.created_at|time_ago }}</span>
+    </div>
+    {% else %}
+    <div class="empty-state"><p>&#128276; Koi notifications nahi hain.</p></div>
+    {% endfor %}
+
+    {% for n in broadcast %}
+    <div class="notif-item notif-broadcast {% if not n.is_read %}notif-unread{% endif %} animate-slide-right" style="animation-delay: {{ (loop.index0 + notifs|length) * 0.03 }}s">
+        <span class="broadcast-badge">BROADCAST</span>
+        <h4>{{ n.title }}</h4>
+        <p>{{ n.message }}</p>
+        <span class="notif-date">{{ n.created_at|time_ago }}</span>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ meta_title }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Exam <span class="text-highlight">Results</span></h1>
+    <p>MP Board & competitive exam results</p>
+</div>
+
+<div class="filters">
+    <form method="GET" class="filter-form">
+        <select name="status" class="filter-select">
+            <option value="">All</option>
+            <option value="upcoming" {% if current_status == 'upcoming' %}selected{% endif %}>Upcoming</option>
+            <option value="declared" {% if current_status == 'declared' %}selected{% endif %}>Declared</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+</div>
+
+<div class="results-list">
+    {% for result in results %}
+    <div class="result-item animate-slide-right" style="animation-delay: {{ loop.index0 * 0.05 }}s">
+        <div class="result-status status-{{ result.status }}">{{ result.status|upper }}</div>
+        <h3>{{ result.exam_name }}</h3>
+        <p class="result-date">Result Date: {{ result.result_date }}</p>
+        {% if result.link %}
+        <a href="{{ result.link }}" target="_blank" class="btn btn-primary btn-small">Check Result &rarr;</a>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="empty-state"><p>&#128193; Abhi koi results nahi hain.</p></div>
+    {% endfor %}
+</div>
+{% endblock %}

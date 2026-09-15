@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ meta_title }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Search <span class="text-highlight">Results</span></h1>
+    <form method="GET" class="search-form">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search notes, papers..." class="filter-input search-input-large">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+
+{% if query %}
+<div class="section">
+    <h2 class="section-title">Notes ({{ notes_results|length }})</h2>
+    <div class="card-grid">
+        {% for note in notes_results %}
+        <a href="{{ url_for('main.note_detail', slug=note.slug) }}" class="card animate-fade-up">
+            <div class="card-class">{{ note.class_level }}</div>
+            <h3 class="card-title">{{ note.title }}</h3>
+            <p class="card-meta">{{ note.subject }}</p>
+        </a>
+        {% else %}
+        <p class="empty-state">Koi notes nahi mile.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="section">
+    <h2 class="section-title">Papers ({{ papers_results|length }})</h2>
+    <div class="card-grid">
+        {% for paper in papers_results %}
+        <a href="{{ url_for('main.paper_detail', slug=paper.slug) }}" class="card animate-fade-up">
+            <div class="card-class">{{ paper.exam_type }} &middot; {{ paper.year }}</div>
+            <h3 class="card-title">{{ paper.title }}</h3>
+            <p class="card-meta">{{ paper.subject }}</p>
+        </a>
+        {% else %}
+        <p class="empty-state">Koi papers nahi mile.</p>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="empty-state">
+    <p>&#128269; Search bar me kuch likhein.</p>
+</div>
+{% endif %}
+{% endblock %}

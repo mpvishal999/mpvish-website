@@ -1,0 +1,17 @@
+{% if pagination and pagination.total_pages > 1 %}
+<div class="pagination">
+    {% if pagination.has_prev %}
+    <a href="?page={{ pagination.prev_page }}{% if request.args.get('q') %}&q={{ request.args.get('q') }}{% endif %}{% if request.args.get('class') %}&class={{ request.args.get('class') }}{% endif %}{% if request.args.get('subject') %}&subject={{ request.args.get('subject') }}{% endif %}{% if request.args.get('year') %}&year={{ request.args.get('year') }}{% endif %}{% if request.args.get('exam') %}&exam={{ request.args.get('exam') }}{% endif %}" class="page-link">&laquo; Prev</a>
+    {% endif %}
+    {% for p in range(1, pagination.total_pages + 1) %}
+    {% if p == pagination.page %}
+    <span class="page-link page-active">{{ p }}</span>
+    {% else %}
+    <a href="?page={{ p }}{% if request.args.get('q') %}&q={{ request.args.get('q') }}{% endif %}{% if request.args.get('class') %}&class={{ request.args.get('class') }}{% endif %}{% if request.args.get('subject') %}&subject={{ request.args.get('subject') }}{% endif %}{% if request.args.get('year') %}&year={{ request.args.get('year') }}{% endif %}{% if request.args.get('exam') %}&exam={{ request.args.get('exam') }}{% endif %}" class="page-link">{{ p }}</a>
+    {% endif %}
+    {% endfor %}
+    {% if pagination.has_next %}
+    <a href="?page={{ pagination.next_page }}{% if request.args.get('q') %}&q={{ request.args.get('q') }}{% endif %}{% if request.args.get('class') %}&class={{ request.args.get('class') }}{% endif %}{% if request.args.get('subject') %}&subject={{ request.args.get('subject') }}{% endif %}{% if request.args.get('year') %}&year={{ request.args.get('year') }}{% endif %}{% if request.args.get('exam') %}&exam={{ request.args.get('exam') }}{% endif %}" class="page-link">Next &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ meta_title }}{% endblock %}
+{% block meta_description %}{{ meta_description }}{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>MP <span class="text-highlight">Yojna</span> & Info</h1>
+    <p>Madhya Pradesh ke Sarkari Yojna, Helpline Numbers aur Important Links</p>
+</div>
+
+<div class="filters">
+    <form method="GET" class="filter-form">
+        <input type="text" name="q" value="{{ search_q }}" placeholder="Search yojna..." class="filter-input">
+        <select name="category" class="filter-select">
+            <option value="">All Categories</option>
+            {% for c in categories %}
+            <option value="{{ c }}" {% if current_category == c %}selected{% endif %}>{{ c|capitalize }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+</div>
+
+<div class="card-grid">
+    {% for y in yojnas %}
+    <div class="card card-yojna animate-fade-up" style="animation-delay: {{ loop.index0 * 0.05 }}s">
+        <div class="card-badge card-badge-{{ y.category }}">{{ y.category|upper }}</div>
+        {% if y.is_featured %}<div class="card-badge card-badge-featured">FEATURED</div>{% endif %}
+        <h3 class="card-title">{{ y.title }}</h3>
+        <p class="card-desc">{{ y.description|truncate_text(120) }}</p>
+        {% if y.department %}<p class="card-meta">Dept: {{ y.department }}</p>{% endif %}
+        {% if y.eligibility %}<p class="card-meta">Eligibility: {{ y.eligibility|truncate_text(80) }}</p>{% endif %}
+        {% if y.benefits %}<p class="card-meta">Benefits: {{ y.benefits|truncate_text(80) }}</p>{% endif %}
+        {% if y.helpline_number %}<p class="card-meta">Helpline: {{ y.helpline_number }}</p>{% endif %}
+        {% if y.link %}
+        <a href="{{ y.link }}" target="_blank" class="btn btn-primary btn-small btn-animate">{{ y.link_text or 'Apply / Read More' }} &rarr;</a>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>&#127967; Abhi koi yojna nahi hain. Jald add honge!</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

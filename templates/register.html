@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Register - {{ site_name }}{% endblock %}
+{% block content %}
+<script>window.location.href = '{{ url_for("auth.login") }}#register';</script>
+<p>Redirecting...</p>
+{% endblock %}

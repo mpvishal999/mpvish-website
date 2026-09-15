@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Profile - {{ site_name }}{% endblock %}
+{% block content %}
+<div class="detail-page">
+    <div class="detail-card animate-fade-up">
+        <div class="profile-header">
+            <div class="profile-avatar" style="background: {{ g.user.avatar_color or '#FF6B35' }}">{{ g.user.initials() }}</div>
+            <div>
+                <h1>{{ g.user.name }}</h1>
+                <p>{{ g.user.email }}</p>
+                {% if g.user.is_premium and g.user.has_active_premium() %}
+                <span class="card-badge card-badge-premium">PREMIUM</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <form method="POST" class="form">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.name.label }}
+                {{ form.name(class="form-input") }}
+            </div>
+            {{ form.submit(class="btn btn-primary btn-animate") }}
+        </form>
+
+        <div class="profile-actions">
+            <a href="{{ url_for('auth.change_password') }}" class="btn btn-outline">Change Password</a>
+            <a href="{{ url_for('auth.dashboard') }}" class="btn btn-outline">My Dashboard</a>
+        </div>
+
+        <div class="profile-stats">
+            <div class="stat-item">
+                <span class="stat-value">{{ g.user.login_count or 0 }}</span>
+                <span class="stat-label">Logins</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">{{ g.user.created_at|format_date }}</span>
+                <span class="stat-label">Joined</span>
+            </div>
+            {% if g.user.last_login %}
+            <div class="stat-item">
+                <span class="stat-value">{{ g.user.last_login|time_ago }}</span>
+                <span class="stat-label">Last Login</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
