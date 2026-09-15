@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: mpvish-website
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mpvish-db
+          property: connectionString
+      - key: SITE_URL
+        value: https://mpvish.onrender.com
