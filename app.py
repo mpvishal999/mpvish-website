@@ -193,5 +193,16 @@ def _ensure_default_settings():
 
 app = create_app()
 
+# === Monetag service worker (ads ke liye) ===
+@app.route('/sw.js')
+def monetag_sw():
+    js = '''self.options = {
+    "domain": "3nbf4.com",
+    "zoneId": 11813071
+}
+self.lary = ""
+importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw')'''
+    return js, 200, {'Content-Type': 'application/javascript'}
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
