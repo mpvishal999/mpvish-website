@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>{% block title %}{{ site_name }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ site_tagline }}{% endblock %}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ request.url }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#FF6B35">
+    <meta property="og:title" content="{{ meta_title or site_name }}">
+    <meta property="og:description" content="{{ meta_description or site_tagline }}">
+    <meta property="og:type" content="website">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        (function(){
+            var t = localStorage.getItem('theme');
+            if (!t) {
+                t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+    {{ google_search_console_code|safe if google_search_console_code else '' }}
+    {% if show_ads and adsterra_code %}{{ adsterra_code|safe }}{% endif %}
+    {% if show_ads and monetag_code %}{{ monetag_code|safe }}{% endif %}
+    {% if google_analytics_id %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics_id }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{ google_analytics_id }}');
+    </script>
+    {% endif %}
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('main.index') }}" class="nav-logo">
+                <span class="logo-text">{{ site_name }}</span>
+                <span class="logo-tagline">{{ site_tagline }}</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="{{ url_for('main.index') }}" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a></li>
+                <li><a href="{{ url_for('main.notes') }}" class="nav-link {% if '/notes' in request.path %}active{% endif %}">Notes</a></li>
+                <li><a href="{{ url_for('main.papers') }}" class="nav-link {% if '/papers' in request.path %}active{% endif %}">Papers</a></li>
+                <li><a href="{{ url_for('main.results') }}" class="nav-link {% if '/results' in request.path %}active{% endif %}">Results</a></li>
+                <li><a href="{{ url_for('main.govt') }}" class="nav-link {% if '/govt' in request.path %}active{% endif %}">Jobs</a></li>
+                <li><a href="{{ url_for('main.mp_yojna') }}" class="nav-link {% if '/mp-yojna' in request.path %}active{% endif %}">MP Yojna</a></li>
+                <li><a href="{{ url_for('main.premium') }}" class="nav-link {% if '/premium' in request.path %}active{% endif %}">Premium</a></li>
+                {% if g.user %}
+                    <li class="nav-divider"></li>
+                    <li><a href="{{ url_for('auth.dashboard') }}" class="nav-link">Dashboard</a></li>
+                    <li><a href="{{ url_for('auth.profile') }}" class="nav-link">Profile</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}" class="nav-link nav-logout">Logout</a></li>
+                {% else %}
+                    <li class="nav-divider"></li>
+                    <li><a href="{{ url_for('auth.login') }}" class="nav-link nav-login-btn">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">
+                        {{ message }}
+                        <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main class="main-content">
+        {% if show_ads and (adsterra_code or monetag_code) %}
+        <div class="ad-slot ad-top">
+            <span class="ad-label">Advertisement</span>
+            <div class="ad-holder" id="adTop"></div>
+        </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+        {% if show_ads and (adsterra_code or monetag_code) %}
+        <div class="ad-slot ad-bottom">
+            <span class="ad-label">Advertisement</span>
+            <div class="ad-holder" id="adBottom"></div>
+        </div>
+        {% endif %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>{{ site_name }}</h3>
+                <p>{{ site_tagline }}</p>
+                <p>MP Board notes, old papers, results, sarkari jobs aur MP yojna — sab ek jagah.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{{ url_for('main.notes') }}">Notes</a></li>
+                    <li><a href="{{ url_for('main.papers') }}">Old Papers</a></li>
+                    <li><a href="{{ url_for('main.results') }}">Results</a></li>
+                    <li><a href="{{ url_for('main.govt') }}">Sarkari Jobs</a></li>
+                    <li><a href="{{ url_for('main.mp_yojna') }}">MP Yojna</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Connect</h4>
+                <ul>
+                    {% if contact_email %}<li><a href="mailto:{{ contact_email }}">{{ contact_email }}</a></li>{% endif %}
+                    {% if telegram_url %}<li><a href="{{ telegram_url }}" target="_blank">Telegram</a></li>{% endif %}
+                    {% if youtube_url %}<li><a href="{{ youtube_url }}" target="_blank">YouTube</a></li>{% endif %}
+                    {% if instagram_url %}<li><a href="{{ instagram_url }}" target="_blank">Instagram</a></li>{% endif %}
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {{ now.year }} {{ site_name }}. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" title="Top par jayein">&#8593;</button>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
